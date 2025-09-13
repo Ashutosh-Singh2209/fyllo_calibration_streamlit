@@ -4,3 +4,5 @@ python-dotenv
 pandas
 numpy
 plotly
+scipy>=1.14.1
+scikit-learn
