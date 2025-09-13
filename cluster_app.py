@@ -95,13 +95,13 @@ with col1:
             plot_info = []
             
             progress_bar = st.progress(0)
-            for i, plot_id in enumerate(plot_ids[:50]):
+            for i, plot_id in enumerate(plot_ids):
                 plot_features = analyze_plot_data(plot_id)
                 if plot_features:
                     all_features.extend(plot_features)
                     plot_info.extend([plot_id] * len(plot_features))
                 
-                progress_bar.progress((i + 1) / 50)
+                progress_bar.progress((i + 1) / len(plot_ids))
             
             if all_features:
                 df_features = pd.DataFrame(all_features)
