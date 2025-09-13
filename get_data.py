@@ -38,3 +38,26 @@ def get_field_data(plot_id):
     }
     docs = list(field_data_collection.find(filter_query, projection))
     return docs
+
+def get_field_data_recent(plot_id, days_back=15):
+    from datetime import timedelta
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=days_back)
+    
+    filter_query = {
+        "plotId": plot_id,
+        "timestamp": {"$gte": start_date, "$lte": end_date}
+    }
+    projection = {
+        "_id": 1,
+        "deviceId": 1,
+        "plotId": 1,
+        "farmUserId": 1,
+        "timestamp": 1,
+        "moisture1": 1,
+        "moisture2": 1,
+        "I1": 1,
+        "I2": 1
+    }
+    docs = list(field_data_collection.find(filter_query, projection))
+    return docs

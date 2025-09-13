@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from get_data import get_plot_ids, get_field_data
+from get_data import get_plot_ids, get_field_data, get_field_data_recent
 from make_histogram import slope_histogram
 from utils import find_calibration_points, get_calibration_value
 import os
@@ -63,8 +63,8 @@ def get_histogram_features(values, remove_leftmost=True):
     
     return largest_bin_midpoint, second_largest_bin_midpoint
 
-def analyze_plot_data(plot_id):
-    docs = get_field_data(plot_id)
+def analyze_plot_data(plot_id, days_back=15):
+    docs = get_field_data_recent(plot_id, days_back)
     if not docs:
         return []
     
@@ -101,20 +101,24 @@ def analyze_plot_data(plot_id):
 st.title("Slope Histogram Clustering Analysis")
 st.markdown("Analyzing histogram features from I1 and I2 slope data across multiple plots")
 
-
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button("Load and Analyze Data"):
         with st.spinner("Loading plot data..."):
+            from datetime import datetime, timedelta
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=15)
+            
             plot_ids = get_plot_ids()
             st.info(f"Found {len(plot_ids)} plots to analyze")
+            st.info(f"Analyzing data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} (15 days)")
             
             all_features = []
             plot_info = []
             
             progress_bar = st.progress(0)
             for i, plot_id in enumerate(plot_ids):
-                plot_features = analyze_plot_data(plot_id)
+                plot_features = analyze_plot_data(plot_id, 15)
                 if plot_features:
                     all_features.extend(plot_features)
                     plot_info.extend([plot_id] * len(plot_features))
