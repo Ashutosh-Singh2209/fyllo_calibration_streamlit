@@ -95,18 +95,26 @@ with col1:
             plot_info = []
             
             progress_bar = st.progress(0)
-            for i, plot_id in enumerate(plot_ids):
+            for i, plot_id in enumerate(plot_ids[:50]):
                 plot_features = analyze_plot_data(plot_id)
                 if plot_features:
                     all_features.extend(plot_features)
                     plot_info.extend([plot_id] * len(plot_features))
                 
-                progress_bar.progress((i + 1) / len(plot_ids))
+                progress_bar.progress((i + 1) / 50)
             
             if all_features:
                 df_features = pd.DataFrame(all_features)
                 df_features.to_csv('histogram_features.csv', index=False)
                 st.success(f"Successfully analyzed {len(df_features)} plots with valid features and saved to CSV")
+                
+                csv_data = df_features.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download CSV",
+                    data=csv_data,
+                    file_name='histogram_features.csv',
+                    mime='text/csv'
+                )
 
 with col2:
     if st.button("Load from CSV"):
